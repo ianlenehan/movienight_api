@@ -5,5 +5,11 @@ module Api::V1
       groups = Group.all
       render json: groups
     end
+
+    def members
+      group = Group.find(params[:id])
+      members = group.users
+      render json: members
+    end
   end
 end
