@@ -5,6 +5,7 @@ Rails.application.routes.draw do
       devise_for :users
       resources :users, only: [:show, :update, :create, :destroy, :index]
       resources :groups, only: [:index, :create]
+      resources :events, only: [:create]
       get '/groups/:id/members' => 'groups#members'
       post '/users/user_details' => 'users#user_details'
       post '/groups/join' => 'requests#new'
