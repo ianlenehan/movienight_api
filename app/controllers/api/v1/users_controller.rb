@@ -15,7 +15,8 @@ module Api::V1
     def user_details
       user = User.find_by(access_token: params[:user][:access_token])
       groups = user.groups
-      render json: { user: user, groups: groups }
+      events = user_events(user)
+      render json: { user: user, groups: groups, events: events }
     end
 
     def create
@@ -48,6 +49,12 @@ module Api::V1
 
     def user_params
       params.require(:user).permit(:email, :password, :password_confirmation)
+    end
+
+    def user_events(user)
+      group_ids = user.groups.pluck(:id)
+      result = Event.where(group_id: group_ids)
+      events = result.sort_by { |event| event.date }.reverse
     end
   end
 end
