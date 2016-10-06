@@ -6,6 +6,10 @@ Rails.application.routes.draw do
       resources :users, only: [:show, :update, :create, :destroy, :index]
       resources :groups, only: [:index, :create]
       resources :events, only: [:create]
+      post '/events/find' => 'events#show'
+      post '/events/add_movie' => 'events#add_movie'
+      post '/events/attending' => 'events#attending'
+      post '/events/not_attending' => 'events#not_attending'
       get '/groups/:id/members' => 'groups#members'
       post '/users/user_details' => 'users#user_details'
       post '/groups/join' => 'requests#new'
