@@ -6,6 +6,7 @@ module Api::V1
 
       render json: {
         event: event,
+        group: event.group,
         attendees: event.users,
         attending: is_user_attending?(current_user, event)
       }
@@ -47,14 +48,31 @@ module Api::V1
 
     def not_attending
       event = Event.find(params[:event][:id])
-      current_user = User.find_by(access_token: params[:user][:access_token])
-      event.users.delete(current_user)
+      user = User.find_by(access_token: params[:user][:access_token])
+      event.users.delete(user)
       render json: event.users
+    end
+
+    def add_rating
+      event = Event.find(params[:event][:id])
+      user = User.find_by(access_token: params[:user][:access_token])
+      rating = params[:rating]
+      remove_rating(event, user) if user_has_already_rated(event, user)
+      rating = Rating.create
+      rating.update(user_id: user.id, rating: rating, event_id: event.id)
     end
 
     private
     def is_user_attending?(user, event)
       event.users.include?(user)
+    end
+
+    def user_has_already_rated(event, user)
+      event.ratings.exists?(user_id: user.id)
+    end
+
+    def remove_rating(event, user)
+      event.ratings.destroy(event.ratings.where(:user_id => user.id))
     end
   end
 end

@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       post '/events/add_movie' => 'events#add_movie'
       post '/events/attending' => 'events#attending'
       post '/events/not_attending' => 'events#not_attending'
+      get '/groups/events/:id' => 'groups#events'
       get '/groups/:id/members' => 'groups#members'
       post '/users/user_details' => 'users#user_details'
       post '/groups/join' => 'requests#new'

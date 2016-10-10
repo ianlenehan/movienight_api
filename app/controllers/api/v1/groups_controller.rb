@@ -33,5 +33,11 @@ module Api::V1
       render plain: "#{user.first_name} has been successfully added to the #{group.group_name} group."
     end
 
+    def events
+      group = Group.find(params[:id])
+      events = group.events
+      render json: events
+    end
+
   end
 end
