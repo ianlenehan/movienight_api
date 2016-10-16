@@ -2,8 +2,8 @@ Rails.application.routes.draw do
 
   namespace :api, defaults:{ format: :json } do
     namespace :v1 do
-      devise_for :users
-      resources :users, only: [:show, :update, :create, :destroy, :index]
+      # devise_for :users
+      resources :users, only: [:show, :create, :destroy, :index]
       resources :groups, only: [:index, :create]
       resources :events, only: [:create]
       post '/events/find' => 'events#show'

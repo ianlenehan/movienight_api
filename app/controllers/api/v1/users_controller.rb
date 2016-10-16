@@ -20,22 +20,33 @@ module Api::V1
     end
 
     def create
-      user = User.new(user_params)
-      # if the user is saved successfully than respond with json data and status code 201
-      if user.save
-        render json: user, status: 201
+      if params[:user][:mode] == 'Update'
+        update_user(user_params)
       else
-        render json: { errors: user.errors }, status: 422
+        user = User.new(user_params)
+        # if the user is saved successfully than respond with json data and status code 201
+        if user.save
+          render json: user, status: 201
+        else
+          render json: { errors: user.errors }, status: 422
+        end
       end
     end
 
-    def update
-      user = User.find(params[:id])
-
-      if user.update(user_params)
-        render json: user, status: 200
+    def update_user(user_params)
+      user = User.find_by(email: user_params[:email])
+      if user_params[:password].length > 0
+        if update_user_details(user, params[:user])
+          render json: user, status: 200
+        else
+          render json: { errors: user.errors }, status: 422
+        end
       else
-        render json: { errors: user.errors }, status: 422
+        if update_basic_details(user, params[:user])
+          render json: user, status: 200
+        else
+          render json: { errors: user.errors }, status: 422
+        end
       end
     end
 
@@ -48,7 +59,25 @@ module Api::V1
     private
 
     def user_params
-      params.require(:user).permit(:email, :password, :password_confirmation)
+      params.require(:user).permit(:email, :name_first, :name_last, :password, :password_confirmation, :mode)
+    end
+
+    def update_user_details(user, params)
+      user.update(
+        name_first: params[:name_first],
+        name_last: params[:name_last],
+        email: params[:email],
+        password: params[:password],
+        password_confirmation: params[:password_confirmation]
+      )
+    end
+
+    def update_basic_details(user, params)
+      user.update(
+        name_first: params[:name_first],
+        name_last: params[:name_last],
+        email: params[:email],
+      )
     end
 
     def user_events(user)
