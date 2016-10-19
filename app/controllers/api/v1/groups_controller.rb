@@ -12,16 +12,11 @@ module Api::V1
       render json: members
     end
 
-    def create
-      group = Group.new
-      user = User.find(params[:id])
-      group.group_name = params[:name]
-      group.group_admin = params[:id]
-      if group.save
-        group.users << user
-        render json: group
+    def create_or_update
+      if Group.find(params[:id])
+        update(params)
       else
-        render json: { errors: group.errors }
+        create(params)
       end
     end
 
@@ -37,6 +32,31 @@ module Api::V1
       group = Group.find(params[:id])
       events = group.events
       render json: events
+    end
+
+    private
+
+    def create(params)
+      group = Group.new
+      user = User.find(params[:user_id])
+      group.group_name = params[:name]
+      group.group_admin = params[:user_id]
+      group.image = params[:image]
+      if group.save
+        group.users << user
+        render json: group
+      else
+        render json: { errors: group.errors }
+      end
+    end
+
+    def update(params)
+      group = Group.find(params[:id])
+      if group.update(group_name: params[:name], image: params[:image])
+        render json: group
+      else
+        render json: { errors: group.errors }
+      end
     end
 
   end

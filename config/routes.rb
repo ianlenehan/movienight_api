@@ -4,8 +4,9 @@ Rails.application.routes.draw do
     namespace :v1 do
       # devise_for :users
       resources :users, only: [:show, :create, :destroy, :index]
-      resources :groups, only: [:index, :create]
-      resources :events, only: [:create]
+      resources :groups, only: [:index]
+      post '/events' => 'events#create_or_update'
+      post '/groups' => 'groups#create_or_update'
       post '/events/find' => 'events#show'
       post '/events/add_movie' => 'events#add_movie'
       post '/events/attending' => 'events#attending'

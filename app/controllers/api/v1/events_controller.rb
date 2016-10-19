@@ -12,16 +12,11 @@ module Api::V1
       }
     end
 
-    def create
-      event = Event.new
-      event.location = params[:location]
-      event.date = params[:date]
-      event.group_id = params[:group_id]
-
-      if event.save
-        render json: event
+    def create_or_update
+      if params[:id]
+        update(params)
       else
-        render json: { errors: user.errors }
+        create(params)
       end
     end
 
@@ -63,6 +58,29 @@ module Api::V1
     end
 
     private
+
+    def create(params)
+      event = Event.new
+      event.location = params[:location]
+      event.date = params[:date]
+      event.group_id = params[:group_id]
+      if event.save
+        render json: event
+      else
+        render json: { errors: user.errors }
+      end
+    end
+
+    def update(params)
+      event = Event.find(params[:id])
+      if event.update(location: params[:location], date: params[:date])
+        render json: event
+      else
+        render json: { errors: event.errors }
+      end
+
+    end
+
     def is_user_attending?(user, event)
       event.users.include?(user)
     end

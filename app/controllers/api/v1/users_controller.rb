@@ -59,7 +59,7 @@ module Api::V1
     private
 
     def user_params
-      params.require(:user).permit(:email, :name_first, :name_last, :password, :password_confirmation, :mode)
+      params.require(:user).permit(:email, :name_first, :name_last, :password, :password_confirmation, :image)
     end
 
     def update_user_details(user, params)
@@ -67,6 +67,7 @@ module Api::V1
         name_first: params[:name_first],
         name_last: params[:name_last],
         email: params[:email],
+        image: params[:image],
         password: params[:password],
         password_confirmation: params[:password_confirmation]
       )
@@ -77,6 +78,7 @@ module Api::V1
         name_first: params[:name_first],
         name_last: params[:name_last],
         email: params[:email],
+        image: params[:image]
       )
     end
 
