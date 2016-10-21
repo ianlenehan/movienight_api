@@ -3,7 +3,6 @@ module Api::V1
     def show
       event = Event.find(params[:event][:id])
       current_user = User.find_by(access_token: params[:user][:access_token])
-
       render json: {
         event: event,
         group: event.group,
@@ -51,10 +50,25 @@ module Api::V1
     def add_rating
       event = Event.find(params[:event][:id])
       user = User.find_by(access_token: params[:user][:access_token])
-      rating = params[:rating]
+      rating = params[:event][:rating]
       remove_rating(event, user) if user_has_already_rated(event, user)
-      rating = Rating.create
-      rating.update(user_id: user.id, rating: rating, event_id: event.id)
+      rating_record = Rating.create
+      if rating_record.update(user_id: user.id, rating_score: rating, event_id: event.id)
+        render json: rating_record
+      else
+        render json: { errors: rating_record.errors }
+      end
+    end
+
+    def show_rating
+      event = Event.find(params[:id])
+      user = User.find(params[:user_id])
+      average = get_average_rating(event)
+      if rating = find_rating(event, user)
+        render json: { rating: rating, average: average }
+      else
+        render json: { rating: 0, average: average }
+      end
     end
 
     private
@@ -91,6 +105,16 @@ module Api::V1
 
     def remove_rating(event, user)
       event.ratings.destroy(event.ratings.where(:user_id => user.id))
+    end
+
+    def find_rating(event, user)
+      event.ratings.where(:user_id => user.id)
+    end
+
+    def get_average_rating(event)
+      count = event.ratings.count
+      ratings = event.ratings.pluck(:rating_score)
+      average = ratings.inject(0, :+) / count
     end
   end
 end
