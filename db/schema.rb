@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161020105644) do
+ActiveRecord::Schema.define(version: 20161022022050) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,9 +32,9 @@ ActiveRecord::Schema.define(version: 20161020105644) do
 
   create_table "groups", force: :cascade do |t|
     t.string   "group_name"
-    t.text     "image"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.text     "image",       default: "http://res.cloudinary.com/ianlenehan/image/upload/v1477102417/Screen_Shot_2016-10-22_at_1.12.27_pm_ulvytz.png"
+    t.datetime "created_at",                                                                                                                            null: false
+    t.datetime "updated_at",                                                                                                                            null: false
     t.integer  "group_admin"
   end
 

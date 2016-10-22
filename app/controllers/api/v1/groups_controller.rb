@@ -13,7 +13,7 @@ module Api::V1
     end
 
     def create_or_update
-      if Group.find(params[:id])
+      if params[:id].length > 0
         update(params)
       else
         create(params)
